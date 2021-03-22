@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
+    public float WaitTime = 1f;
 
     public bool canMove;
 
@@ -15,6 +16,8 @@ public class PlayerMove : MonoBehaviour
 
     bool isGrounded;
 
+    bool EndLevel;
+
     public Transform GroundCheck;
 
     public LayerMask groundlayer;
@@ -24,6 +27,8 @@ public class PlayerMove : MonoBehaviour
     bool isSpiked;
 
     public LayerMask spikelayer;
+
+    public LayerMask doorlayer;
 
     private void Start()
     {
@@ -44,6 +49,7 @@ public class PlayerMove : MonoBehaviour
                 rb2d.AddForce(movement * speed);
                 isGrounded = Physics2D.OverlapCircle(GroundCheck.position, 1.2f, groundlayer);
             isSpiked = Physics2D.OverlapCircle(GroundCheck.position, 1.2f, spikelayer);
+            EndLevel = Physics2D.OverlapCircle(GroundCheck.position, 1.2f, doorlayer);
         }
     }
     private void Update()
@@ -110,5 +116,20 @@ public class PlayerMove : MonoBehaviour
     void TakeDamage()
     {
         HP = HP - TakenDMG;
+    }
+
+    private void LateUpdate()
+    {
+        if (EndLevel == true)
+        {
+            Player1.enabled = false;
+            Door_Animation();
+        }
+    }
+
+    IEnumerator Door_Animation()
+    {
+        yield return new WaitForSeconds(WaitTime);
+        rb2d.velocity = Vector2.zero;
     }
 }
